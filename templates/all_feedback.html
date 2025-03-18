@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}All Feedback{% endblock %}
+
+{% block content %}
+    <h2>All Feedback Received</h2>
+    {% if feedback %}
+        <div class="feedback-list">
+            {% for entry in feedback %}
+                <div class="feedback-item">
+                    <h3>{{ entry.username }}</h3>
+                    <p>{{ entry.comments }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No feedback submitted yet.</p>
+    {% endif %}
+    <a href="{{ url_for('feedback') }}" class="btn">Submit New Feedback</a>
+{% endblock %}
