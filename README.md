@@ -12,5 +12,5 @@ A simple Flask web app demonstrating template inheritance, form handling, static
 ## Installation
 1. Clone the repo:
    ```bash
-   git clone https://github.com/your-username/my_flask_app.git
+   git clone https://github.com/Vidhipatel9969/my_flask_app.git
    cd my_flask_app

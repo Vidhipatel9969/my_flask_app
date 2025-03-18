@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}API Demo{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">GitHub Repos</h5>
+                <button onclick="fetchRepos()" class="btn btn-primary">Load Repositories</button>
+                <div id="githubRepos" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Weather</h5>
+                <input type="text" id="cityInput" class="form-control mb-2" placeholder="Enter city">
+                <button onclick="getWeather()" class="btn btn-primary">Get Weather</button>
+                <div id="weatherInfo" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function fetchRepos() {
+    fetch('/github-proxy')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('githubRepos');
+            container.innerHTML = data.slice(0,5).map(repo => `
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <h6>${repo.name}</h6>
+                        <p>${repo.description || 'No description'}</p>
+                    </div>
+                </div>
+            `).join('');
+        });
+}
+
+function getWeather() {
+    const city = document.getElementById('cityInput').value || 'London';
+    fetch(`/weather?city=${encodeURIComponent(city)}`)
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('weatherInfo');
+            container.innerHTML = `
+                <div class="card">
+                    <div class="card-body">
+                        <h6>${data.name}</h6>
+                        <p>Temp: ${(data.main.temp - 273.15).toFixed(1)}°C</p>
+                        <p>${data.weather[0].description}</p>
+                    </div>
+                </div>
+            `;
+        });
+}
+</script>
+{% endblock %}

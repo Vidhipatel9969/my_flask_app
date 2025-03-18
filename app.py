@@ -1,42 +1,38 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask_wtf import FlaskForm
+from wtforms import StringField, TextAreaField, validators
+import os
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.getenv('SECRET_KEY')
 
-# In-memory data storage
-feedback_list = []
+# In-memory storage
+feedback_data = []
+projects = [
+    {"title": "Project 1", "description": "E-commerce Platform"},
+    {"title": "Project 2", "description": "Social Media Analytics"}
+]
 
-@app.route("/")
-def home():
-    return render_template("home.html")
+class FeedbackForm(FlaskForm):
+    name = StringField('Name', [validators.Length(min=2, max=50)])
+    email = StringField('Email', [validators.Email()])
+    message = TextAreaField('Message', [validators.Length(min=10, max=500)])
 
-@app.route("/feedback", methods=["GET", "POST"])
-def feedback():
-    if request.method == "POST":
-        username = request.form.get("username")
-        comments = request.form.get("comments")
-        
-        # Store feedback in memory
-        feedback_list.append({
-            "username": username,
-            "comments": comments
-        })
-        
-        return render_template("form_result.html", 
-                             username=username, 
-                             comments=comments)
-    return render_template("feedback.html")
+# Internal API Endpoints
+@app.route('/api/projects')
+def get_projects():
+    return jsonify(projects)
 
-@app.route("/all-feedback")
-def show_feedback():
-    return render_template("all_feedback.html", feedback=feedback_list)
+@app.route('/api/feedback')
+def get_feedback():
+    return jsonify(feedback_data)
 
-@app.route("/api/feedback")
-def feedback_api():
-    return jsonify(feedback_list)
-
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template("404.html"), 404
-
-if __name__ == "__main__":
-    app.run(debug=True)
+# External API Integration
+@app.route('/github-proxy')
+def github_proxy():
+    response = requests.get('https://api.github.com/users/yourusername/repos')
+    return jsonify(response

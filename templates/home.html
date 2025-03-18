@@ -1,15 +1,54 @@
 {% extends "base.html" %}
 
-{% block title %}Home Page{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block content %}
-    <h2>Welcome!</h2>
-    <p>This is the homepage for my enhanced Flask app with these features:</p>
-    <ul>
-        <li>Template Inheritance</li>
-        <li>Form Handling</li>
-        <li>In-Memory Data Storage</li>
-        <li>Custom 404 Page</li>
-        <li>JSON API Endpoint</li>
-    </ul>
+<div class="row">
+    <div class="col-md-8">
+        <h2>Welcome to My Portfolio</h2>
+        <div class="row" id="projectsContainer">
+            {% for project in projects %}
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ project.title }}</h5>
+                        <p class="card-text">{{ project.description }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Contact Me</h5>
+                <form id="feedbackForm" method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control") }}
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label") }}
+                        {{ form.email(class="form-control") }}
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.message.label(class="form-label") }}
+                        {{ form.message(class="form-control", rows=4) }}
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
